@@ -1,0 +1,11 @@
+[project]
+name = "weatherapi"
+version = "0.1.0"
+description = "provides a thin gateway to the weather.gov API"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.7",
+    "pytest>=8.3.4",
+]
+
