@@ -1,8 +1,14 @@
 # test functions in main.py
-import pytest
+from fastapi.testclient import TestClient
 
-from app.main import get_weather
+from app.main import get_weather, app
+
+client = TestClient(app)
 
 
 def test_get_weather():
-    assert get_weather("London") == "Weather in London"
+    response = client.get("/weather/London")
+    assert response.status_code == 200
+    assert response.json() == {
+        "weather": "Weather in London"
+    }
