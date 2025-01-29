@@ -8,7 +8,11 @@ BASE_URL = "https://api.weather.gov"
 
 @app.get("/weather/{city}")
 def get_weather(city: str):
-    geocode_url = f"https://nominatim.openstreetmap.org/search?city={city}&format=json"
+    if "," in city:
+        city, state = city.split(",")
+        geocode_url = f"https://nominatim.openstreetmap.org/search?city={city}&state={state}&format=json"
+    else:
+        geocode_url = f"https://nominatim.openstreetmap.org/search?city={city}&format=json"
     geocode_response = httpx.get(geocode_url)
     geocode_response.raise_for_status()
     geocode_data = geocode_response.json()
@@ -24,7 +28,8 @@ def get_weather(city: str):
     forecast = get_forecast(lat, lon)
     if forecast is None:
         raise HTTPException(
-            status_code=404, detail="City not found"
+            status_code=404,
+            detail="Forecast not found",
         )
     return {"weather": forecast}
 
@@ -50,10 +55,3 @@ def get_forecast(lat: float, lon: float) -> str:
         ]["detailedForecast"]
     except httpx.HTTPStatusError:
         return None
-
-
-if __name__ == "__main__":
-    # import uvicorn
-
-    # uvicorn.run(app, host="127.0.0.1", port=8000)
-    get_weather("Seattle")
