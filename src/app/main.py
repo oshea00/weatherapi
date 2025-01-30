@@ -4,26 +4,13 @@ import httpx
 app = FastAPI()
 
 BASE_URL = "https://api.weather.gov"
+BASE_MAP_URL = "https://nominatim.openstreetmap.org"
 
 
 @app.get("/weather/{city}")
 def get_weather(city: str):
-    if "," in city:
-        city, state = city.split(",")
-        geocode_url = f"https://nominatim.openstreetmap.org/search?city={city}&state={state}&format=json"
-    else:
-        geocode_url = f"https://nominatim.openstreetmap.org/search?city={city}&format=json"
-    geocode_response = httpx.get(geocode_url)
-    geocode_response.raise_for_status()
-    geocode_data = geocode_response.json()
 
-    if not geocode_data:
-        raise HTTPException(
-            status_code=404, detail="City not found"
-        )
-
-    lat = geocode_data[0]["lat"]
-    lon = geocode_data[0]["lon"]
+    lat, lon = get_coordinates(city)
 
     forecast = get_forecast(lat, lon)
     if forecast is None:
@@ -32,6 +19,29 @@ def get_weather(city: str):
             detail="Forecast not found",
         )
     return {"weather": forecast}
+
+
+def get_coordinates(city: str) -> dict:
+    if "," in city:
+        city, state = city.split(",")
+        geocode_url = f"{BASE_MAP_URL}/search?city={city}&state={state}&format=json"
+    else:
+        geocode_url = f"{BASE_MAP_URL}/search?city={city}&format=json"
+
+    geocode_response = httpx.get(geocode_url)
+    geocode_response.raise_for_status()
+    geocode_data = geocode_response.json()
+
+    if geocode_data is None or len(geocode_data) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="City not found",
+        )
+
+    lat = geocode_data[0]["lat"]
+    lon = geocode_data[0]["lon"]
+
+    return lat, lon
 
 
 def get_forecast(lat: float, lon: float) -> str:
