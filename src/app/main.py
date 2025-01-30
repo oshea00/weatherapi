@@ -8,7 +8,7 @@ BASE_MAP_URL = "https://nominatim.openstreetmap.org"
 
 
 @app.get("/weather/{city}")
-def get_weather(city: str):
+def get_weather(city: str) -> dict:
 
     lat, lon = get_coordinates(city)
 
@@ -21,7 +21,7 @@ def get_weather(city: str):
     return {"weather": forecast}
 
 
-def get_coordinates(city: str) -> dict:
+def get_coordinates(city: str) -> tuple:
     if "," in city:
         city, state = city.split(",")
         geocode_url = f"{BASE_MAP_URL}/search?city={city}&state={state}&format=json"
