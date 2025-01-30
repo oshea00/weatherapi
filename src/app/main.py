@@ -38,10 +38,10 @@ def get_coordinates(city: str) -> dict:
             detail="City not found",
         )
 
-    lat = geocode_data[0]["lat"]
-    lon = geocode_data[0]["lon"]
-
-    return lat, lon
+    return (
+        geocode_data[0]["lat"],
+        geocode_data[0]["lon"],
+    )
 
 
 def get_forecast(lat: float, lon: float) -> str:
@@ -60,8 +60,6 @@ def get_forecast(lat: float, lon: float) -> str:
         forecast_response.raise_for_status()
         forecast_data = forecast_response.json()
 
-        return forecast_data["properties"]["periods"][
-            0
-        ]["detailedForecast"]
+        return forecast_data["properties"]["periods"]
     except httpx.HTTPStatusError:
         return None
