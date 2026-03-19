@@ -1,3 +1,3 @@
-from app.weather import CityNotFoundError, get_coordinates, get_forecast
+from app.weather import LocationNotFound, get_coordinates, get_forecast
 
-__all__ = ["CityNotFoundError", "get_coordinates", "get_forecast"]
+__all__ = ["LocationNotFound", "get_coordinates", "get_forecast"]

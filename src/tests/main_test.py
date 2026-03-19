@@ -62,14 +62,14 @@ def test_get_weather_city_state_country(monkeypatch):
 
 def test_get_weather_badcity(monkeypatch):
     def _raise_city_not_found(city, state=None, country=None):
-        raise main_module.CityNotFoundError(city)
+        raise main_module.LocationNotFound(city)
 
     monkeypatch.setattr(main_module, "get_coordinates", _raise_city_not_found)
 
     response = client.get("/weather?city=Wzzzbad")
     assert response.status_code == 404
     assert response.json() == {
-        "detail": "City not found"
+        "detail": "Location not found"
     }
 
 

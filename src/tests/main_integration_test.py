@@ -59,7 +59,7 @@ def test_get_weather_badcity_integration() -> None:
     response = client.get("/weather?city=Wzzzbad")
     assert response.status_code == 404
     assert response.json() == {
-        "detail": "City not found"
+        "detail": "Location not found"
     }
 
 

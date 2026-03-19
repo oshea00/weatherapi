@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException
-from app.weather import CityNotFoundError, get_coordinates, get_forecast
+from app.weather import LocationNotFound, get_coordinates, get_forecast
 
 app = FastAPI()
 
@@ -14,10 +14,10 @@ def get_weather(
 
     try:
         lat, lon = get_coordinates(city, state=state, country=country)
-    except CityNotFoundError:
+    except LocationNotFound:
         raise HTTPException(
             status_code=404,
-            detail="City not found",
+            detail="Location not found",
         )
 
     forecast = get_forecast(lat, lon)

@@ -7,7 +7,7 @@ BASE_WEATHER_URL = "https://api.weather.gov"
 USER_AGENT = "MyLab.1.0 (contact: oshea00@gmail.com)"
 
 
-class CityNotFoundError(Exception):
+class LocationNotFound(Exception):
     pass
 
 
@@ -34,7 +34,7 @@ def get_coordinates(
     geocode_data = geocode_response.json()
 
     if not geocode_data:
-        raise CityNotFoundError(city)
+        raise LocationNotFound(city)
 
     return (
         geocode_data[0]["lat"],
