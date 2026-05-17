@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[oc]
+.git/
+.gitignore
+build/
+dist/
+*.egg-info
+*.cover
+*.coverage
+htmlcov/
+uv.lock
+.python-version
