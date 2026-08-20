@@ -6,6 +6,28 @@ from app.main import app
 client = TestClient(app)
 
 
+def sample_period(temperature=55):
+    return {
+        "number": 1,
+        "name": "Today",
+        "startTime": "2026-08-20T06:00:00-07:00",
+        "endTime": "2026-08-20T18:00:00-07:00",
+        "isDaytime": True,
+        "temperature": temperature,
+        "temperatureUnit": "F",
+        "temperatureTrend": None,
+        "probabilityOfPrecipitation": {
+            "unitCode": "wmoUnit:percent",
+            "value": 0,
+        },
+        "windSpeed": "1 to 6 mph",
+        "windDirection": "NNW",
+        "icon": "https://api.weather.gov/icons/land/day/few?size=medium",
+        "shortForecast": "Sunny",
+        "detailedForecast": "Sunny, with a high near 80.",
+    }
+
+
 def test_get_weather(monkeypatch):
     monkeypatch.setattr(
         main_module,
@@ -15,12 +37,12 @@ def test_get_weather(monkeypatch):
     monkeypatch.setattr(
         main_module,
         "get_forecast",
-        lambda lat, lon: [{"name": "Today", "temperature": 55}],
+        lambda lat, lon: [sample_period()],
     )
 
     response = client.get("/weather?city=Seattle")
     assert response.status_code == 200
-    assert "weather" in response.json()
+    assert response.json() == {"weather": [sample_period()]}
 
 
 def test_get_weather_city_required():
@@ -37,7 +59,7 @@ def test_get_weather_city_state(monkeypatch):
     monkeypatch.setattr(
         main_module,
         "get_forecast",
-        lambda lat, lon: [{"name": "Today", "temperature": 55}],
+        lambda lat, lon: [sample_period()],
     )
 
     response = client.get("/weather?city=Seattle&state=wa")
@@ -53,7 +75,7 @@ def test_get_weather_city_state_country(monkeypatch):
     monkeypatch.setattr(
         main_module,
         "get_forecast",
-        lambda lat, lon: [{"name": "Today", "temperature": 72}],
+        lambda lat, lon: [sample_period(temperature=72)],
     )
 
     response = client.get("/weather?city=Paris&state=TX&country=USA")
